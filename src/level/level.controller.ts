@@ -19,6 +19,11 @@ export class LevelController {
     return this.levelService.findAll();
   }
 
+  @Get('subject/:name')
+  getSubjectsByLevelName(@Param('name') name: string) {
+    return this.levelService.findSubjectsByLevelName(name);
+  }
+
   @Get(':id')
   getOne(@Param('id') id: string) {
     return this.levelService.getLevel(Number(id));
