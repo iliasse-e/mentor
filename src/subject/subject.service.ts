@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SUBJECT_DB } from './db';
-import { Subject } from './model/subject.model';
+import { Subject } from './subject.model';
 
 @Injectable()
 export class SubjectService {

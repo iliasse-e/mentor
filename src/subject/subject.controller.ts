@@ -7,7 +7,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { CreateSubjectDTO } from './model/subject.dto';
+import { CreateSubjectDTO } from './subject.model';
 import { SubjectService } from './subject.service';
 
 @Controller('subject')

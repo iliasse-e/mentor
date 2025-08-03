@@ -1,4 +1,4 @@
-import { Subject } from './model/subject.model';
+import { Subject } from './subject.model';
 
 export const SUBJECT_DB: Subject[] = [
   {
