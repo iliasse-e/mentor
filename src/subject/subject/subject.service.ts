@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SUBJECT_DB } from './db';
-import { Subject } from './subject.model';
+import { Subject } from './model/subject.model';
 
 @Injectable()
 export class SubjectService {
@@ -13,7 +13,10 @@ export class SubjectService {
     return Promise.resolve(subject);
   }
 
-  updateSubject(id: number, newSubject: Subject): Promise<Subject | undefined> {
+  updateSubject(
+    id: number,
+    newSubject: Omit<Subject, 'id'>,
+  ): Promise<Subject | undefined> {
     SUBJECT_DB.map((s: Subject) => {
       if (s.id === id) {
         return newSubject;
@@ -31,8 +34,8 @@ export class SubjectService {
     return Promise.resolve();
   }
 
-  createSubject(subject: Subject): Promise<Subject> {
-    SUBJECT_DB.push(subject);
+  createSubject(subject: Omit<Subject, 'id'>): Promise<Subject> {
+    SUBJECT_DB.push({ id: SUBJECT_DB.length, ...subject });
     return Promise.resolve(SUBJECT_DB[SUBJECT_DB.length - 1]);
   }
 }

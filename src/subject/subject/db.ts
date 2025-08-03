@@ -1,4 +1,4 @@
-import { Subject } from './subject.model';
+import { Subject } from './model/subject.model';
 
 export const SUBJECT_DB: Subject[] = [
   {
@@ -14,11 +14,11 @@ export const SUBJECT_DB: Subject[] = [
     name: 'History',
   },
   {
-    id: 12,
+    id: 4,
     name: 'Physics',
   },
   {
-    id: 29,
+    id: 5,
     name: 'Economy',
   },
 ];
