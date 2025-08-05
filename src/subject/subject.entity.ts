@@ -10,5 +10,5 @@ export class SubjectEntity {
   name: string;
 
   @ManyToOne(() => LevelEntity)
-  level: number;
+  level?: LevelEntity;
 }

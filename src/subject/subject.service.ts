@@ -1,5 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { LevelService } from 'src/level/level.service';
 import { Repository } from 'typeorm';
 import { SubjectEntity } from './subject.entity';
 import { CreateSubjectDTO } from './subject.model';
@@ -9,6 +15,8 @@ export class SubjectService {
   constructor(
     @InjectRepository(SubjectEntity)
     private subjectRepository: Repository<SubjectEntity>,
+    @Inject(forwardRef(() => LevelService))
+    private levelRepository: LevelService,
   ) {}
 
   findAll(): Promise<SubjectEntity[]> {
@@ -33,8 +41,16 @@ export class SubjectService {
       subject.name = updatedSubject.name;
     }
 
-    if (updatedSubject.levelId !== undefined) {
-      subject.level = updatedSubject.levelId;
+    if (
+      updatedSubject.levelId !== undefined &&
+      updatedSubject.levelId !== subject.level?.id
+    ) {
+      const levelId = updatedSubject.levelId;
+      const selectedLevel = await this.levelRepository.getLevel(levelId);
+      if (!selectedLevel) {
+        throw new NotFoundException(`Level with ID ${levelId} not found`);
+      }
+      subject.level = selectedLevel;
     }
 
     return await this.subjectRepository.save(subject);
@@ -44,8 +60,21 @@ export class SubjectService {
     await this.subjectRepository.delete({ id });
   }
 
-  createSubject(subject: CreateSubjectDTO): Promise<SubjectEntity> {
+  async createSubject(subject: CreateSubjectDTO): Promise<SubjectEntity> {
     const createSubject = this.subjectRepository.create({ ...subject });
+
+    if (subject.levelId !== undefined) {
+      const selectedLevel = await this.levelRepository.getLevel(
+        subject.levelId,
+      );
+      if (!selectedLevel) {
+        throw new NotFoundException(
+          `Level with ID ${subject.levelId} not found`,
+        );
+      }
+      createSubject.level = selectedLevel;
+    }
+
     return this.subjectRepository.save(createSubject);
   }
 }
