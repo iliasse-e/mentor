@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -20,8 +21,8 @@ export class SubjectController {
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string) {
-    return this.subjectService.getSubject(Number(id));
+  getOne(@Param('id', ParseIntPipe) id: number) {
+    return this.subjectService.getSubject(id);
   }
 
   @Post()
@@ -29,13 +30,16 @@ export class SubjectController {
     return this.subjectService.createSubject(subject);
   }
 
-  @Put()
-  update(@Param('id') id: string, @Body() subject: CreateSubjectDTO) {
-    return this.subjectService.updateSubject(Number(id), subject);
+  @Put(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() subject: CreateSubjectDTO,
+  ) {
+    return this.subjectService.updateSubject(id, subject);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.subjectService.deleteSubject(Number(id));
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.subjectService.deleteSubject(id);
   }
 }

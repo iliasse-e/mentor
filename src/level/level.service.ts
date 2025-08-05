@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SubjectService } from 'src/subject/subject.service';
 import { DataSource, Repository } from 'typeorm';
@@ -21,24 +21,20 @@ export class LevelService {
   async findSubjectsByLevelName(
     name: string,
   ): Promise<SubjectLevel[] | undefined> {
-    try {
-      const level = await this.getLevelByName(name);
-      if (!level) {
-        throw new Error(`Level with name "${name}" not found.`);
-      }
-
-      const filterSubjects = (await this.subjectService.findAll()).filter(
-        (subject) => subject.id === level?.id,
-      );
-      const response = filterSubjects.map((subject) => ({
-        level,
-        subject: { id: subject.id, name: subject.name, levelId: subject.level },
-      }));
-
-      return response;
-    } catch (error) {
-      throw Error(error);
+    const level = await this.getLevelByName(name);
+    if (!level) {
+      throw new NotFoundException(`Level with name "${name}" not found.`);
     }
+
+    const filterSubjects = (await this.subjectService.findAll()).filter(
+      (subject) => subject.id === level?.id,
+    );
+    const response = filterSubjects.map((subject) => ({
+      level,
+      subject: { id: subject.id, name: subject.name, levelId: subject.level },
+    }));
+
+    return response;
   }
 
   getLevel(id: number): Promise<LevelEntity | null> {

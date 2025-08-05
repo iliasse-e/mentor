@@ -1,12 +1,11 @@
-# 🧑‍🏫 Mentorat App – Projet NestJS
+# 🧑‍🏫 Mentor App
 
 Application web développée avec NestJS, visant à faciliter la mise en relation entre mentors et mentorés. Ce projet s’appuie sur une architecture modulaire et intègre une base de données relationnelle gérée via Docker et manipulée avec TypeORM.
 
 ## 🚀 Fonctionnalités principales
 
-- Gestion d'ajoute de matières
+- Gestion d'ajout de matières
 - API REST structurée avec NestJS
-- ORM intégré via TypeORM
 
 ## 🛠️ Technologies
 
@@ -18,12 +17,29 @@ Application web développée avec NestJS, visant à faciliter la mise en relatio
 
 ---
 
+## 🏢 Architecture
+
+Le modèle d'architecture suivant :
+
+```bash
+src/
+├── feature/
+│   ├── feature.controller.ts/
+│   ├── feature.entity.ts/
+│   ├── feature.model.ts/
+│   ├── feature.service.ts/
+│   └── feature.module.ts/
+├── .../
+├── app.module.ts/
+└── main.ts
+```
+
 ## 🧰 Prérequis
 
 Avant de lancer le projet, assurez-vous d’avoir installé :
 
-- [Node.js](https://nodejs.org/) (version recommandée ≥ 18)
-- [Docker](https://www.docker.com/) – Utilisé pour exécuter l’image PostgreSQL de la base de données
+- [Node.js](https://nodejs.org/) (version recommandée ≥ 20)
+- [Docker](https://www.docker.com/) – Utilisé pour exécuter l’image MariaDB de la base de données
 - [DBeaver](https://dbeaver.io/) (optionnel mais recommandé) – Pour interagir avec la base MariaDB
 
 ## 📦 Installation
@@ -36,12 +52,14 @@ cd mentor
 # Installer les dépendances
 npm install
 
+# Commande qui lance la commande docker et le server Nest
+npm run start:dev
+
+## Ou bien :
+
 # Lancer docker
 docker-compose up -d
 
 # Lancer le server Nest
 nest start
-
-# Le mieux est d'utiliser la commande suivante qui lance la commande docker et le server Nest
-npm run start:dev
 ```

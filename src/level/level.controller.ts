@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -25,8 +26,8 @@ export class LevelController {
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string) {
-    return this.levelService.getLevel(Number(id));
+  getOne(@Param('id', ParseIntPipe) id: number) {
+    return this.levelService.getLevel(id);
   }
 
   @Post()
@@ -34,13 +35,13 @@ export class LevelController {
     return this.levelService.createLevel(level);
   }
 
-  @Put()
-  update(@Param('id') id: string, @Body() level: CreateLevelDTO) {
-    return this.levelService.updateLevel(Number(id), level);
+  @Put(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() level: CreateLevelDTO) {
+    return this.levelService.updateLevel(id, level);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.levelService.deleteLevel(Number(id));
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.levelService.deleteLevel(id);
   }
 }
