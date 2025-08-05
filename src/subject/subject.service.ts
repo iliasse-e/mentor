@@ -1,41 +1,51 @@
-import { Injectable } from '@nestjs/common';
-import { SUBJECT_DB } from './db';
-import { Subject } from './subject.model';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { SubjectEntity } from './subject.entity';
+import { CreateSubjectDTO } from './subject.model';
 
 @Injectable()
 export class SubjectService {
-  findAll(): Promise<Subject[]> {
-    return Promise.resolve(SUBJECT_DB);
+  constructor(
+    @InjectRepository(SubjectEntity)
+    private subjectRepository: Repository<SubjectEntity>,
+  ) {}
+
+  findAll(): Promise<SubjectEntity[]> {
+    return this.subjectRepository.find();
   }
 
-  getSubject(id: number): Promise<Subject | undefined> {
-    const subject = SUBJECT_DB.find((s: Subject) => s.id === id);
-    return Promise.resolve(subject);
+  getSubject(id: number): Promise<SubjectEntity | null> {
+    return this.subjectRepository.findOneBy({ id });
   }
 
-  updateSubject(
+  async updateSubject(
     id: number,
-    newSubject: Omit<Subject, 'id'>,
-  ): Promise<Subject | undefined> {
-    SUBJECT_DB.map((s: Subject) => {
-      if (s.id === id) {
-        return newSubject;
-      } else {
-        return s;
-      }
-    });
+    updatedSubject: CreateSubjectDTO,
+  ): Promise<SubjectEntity> {
+    const subject = await this.subjectRepository.findOne({ where: { id } });
 
-    return Promise.resolve(SUBJECT_DB.find((s: Subject) => s.id === id));
+    if (!subject) {
+      throw new NotFoundException(`Subject with ID ${id} not found`);
+    }
+
+    if (updatedSubject.name !== undefined) {
+      subject.name = updatedSubject.name;
+    }
+
+    if (updatedSubject.levelId !== undefined) {
+      subject.level = updatedSubject.levelId;
+    }
+
+    return await this.subjectRepository.save(subject);
   }
 
-  deleteSubject(id: number): Promise<any> {
-    const index = SUBJECT_DB.findIndex((s) => s.id === id);
-    SUBJECT_DB.splice(index, 1);
-    return Promise.resolve();
+  async deleteSubject(id: number): Promise<void> {
+    await this.subjectRepository.delete({ id });
   }
 
-  createSubject(subject: Omit<Subject, 'id'>): Promise<Subject> {
-    SUBJECT_DB.push({ id: SUBJECT_DB.length, ...subject });
-    return Promise.resolve(SUBJECT_DB[SUBJECT_DB.length - 1]);
+  createSubject(subject: CreateSubjectDTO): Promise<SubjectEntity> {
+    const createSubject = this.subjectRepository.create({ ...subject });
+    return this.subjectRepository.save(createSubject);
   }
 }

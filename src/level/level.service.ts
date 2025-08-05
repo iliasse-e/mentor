@@ -1,15 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { Subject } from 'src/subject/subject.model';
+import { InjectRepository } from '@nestjs/typeorm';
 import { SubjectService } from 'src/subject/subject.service';
-import { LEVEL_DB } from './db';
-import { Level, SubjectLevel } from './level.model';
+import { DataSource, Repository } from 'typeorm';
+import { LevelEntity } from './level.entity';
+import { CreateLevelDTO, SubjectLevel } from './level.model';
 
 @Injectable()
 export class LevelService {
-  constructor(private readonly subjectService: SubjectService) {}
+  constructor(
+    private readonly subjectService: SubjectService,
+    @InjectRepository(LevelEntity)
+    private readonly levelRepository: Repository<LevelEntity>,
+    private readonly dataSource: DataSource,
+  ) {}
 
-  findAll(): Promise<Level[]> {
-    return Promise.resolve(LEVEL_DB);
+  findAll(): Promise<LevelEntity[]> {
+    return this.levelRepository.find();
   }
 
   async findSubjectsByLevelName(
@@ -22,51 +28,42 @@ export class LevelService {
       }
 
       const filterSubjects = (await this.subjectService.findAll()).filter(
-        (subject: Subject) => subject.levelId === level?.id,
+        (subject) => subject.id === level?.id,
       );
-      const response = filterSubjects.map((subject: Subject) => ({
+      const response = filterSubjects.map((subject) => ({
         level,
-        subject,
+        subject: { id: subject.id, name: subject.name, levelId: subject.level },
       }));
+
       return response;
     } catch (error) {
       throw Error(error);
     }
   }
 
-  getLevel(id: number): Promise<Level | undefined> {
-    const Level = LEVEL_DB.find((level: Level) => level.id === id);
-    return Promise.resolve(Level);
+  getLevel(id: number): Promise<LevelEntity | null> {
+    return this.levelRepository.findOneBy({ id });
   }
 
-  getLevelByName(name: string): Promise<Level | undefined> {
-    const Level = LEVEL_DB.find((level: Level) => level.name === name);
-    return Promise.resolve(Level);
+  getLevelByName(name: string): Promise<LevelEntity | null> {
+    return this.levelRepository.findOneBy({ name });
   }
 
-  updateLevel(
-    id: number,
-    newLevel: Omit<Level, 'id'>,
-  ): Promise<Level | undefined> {
-    LEVEL_DB.map((level: Level) => {
-      if (level.id === id) {
-        return newLevel;
-      } else {
-        return level;
-      }
-    });
-
-    return Promise.resolve(LEVEL_DB.find((level: Level) => level.id === id));
+  async updateLevel(id: number, level: CreateLevelDTO): Promise<void> {
+    await this.dataSource
+      .createQueryBuilder()
+      .update(LevelEntity)
+      .set({ name: level.name })
+      .where('id = :id', { id: id })
+      .execute();
   }
 
-  deleteLevel(id: number): Promise<any> {
-    const index = LEVEL_DB.findIndex((level) => level.id === id);
-    LEVEL_DB.splice(index, 1);
-    return Promise.resolve();
+  async deleteLevel(id: number): Promise<void> {
+    await this.levelRepository.delete({ id });
   }
 
-  createLevel(Level: Omit<Level, 'id'>): Promise<Level> {
-    LEVEL_DB.push({ id: LEVEL_DB.length, ...Level });
-    return Promise.resolve(LEVEL_DB[LEVEL_DB.length - 1]);
+  createLevel(level: CreateLevelDTO): Promise<LevelEntity> {
+    const createdLevel = this.levelRepository.create({ ...level });
+    return this.levelRepository.save(createdLevel);
   }
 }

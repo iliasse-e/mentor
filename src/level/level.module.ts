@@ -1,10 +1,14 @@
 import { Module } from '@nestjs/common';
-import { SubjectService } from 'src/subject/subject.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { SubjectModule } from 'src/subject/subject.module';
 import { LevelController } from './level.controller';
+import { LevelEntity } from './level.entity';
 import { LevelService } from './level.service';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([LevelEntity]), SubjectModule],
   controllers: [LevelController],
-  providers: [LevelService, SubjectService],
+  providers: [LevelService],
+  exports: [LevelService],
 })
 export class LevelModule {}
