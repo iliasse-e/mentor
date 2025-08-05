@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   forwardRef,
   Inject,
   Injectable,
@@ -7,8 +8,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { LevelService } from 'src/level/level.service';
 import { Repository } from 'typeorm';
+import { CreateSubjectDTO } from './subject.dto';
 import { SubjectEntity } from './subject.entity';
-import { CreateSubjectDTO } from './subject.model';
 
 @Injectable()
 export class SubjectService {
@@ -30,7 +31,7 @@ export class SubjectService {
   async updateSubject(
     id: number,
     updatedSubject: CreateSubjectDTO,
-  ): Promise<SubjectEntity> {
+  ): Promise<void> {
     const subject = await this.subjectRepository.findOne({ where: { id } });
 
     if (!subject) {
@@ -41,6 +42,7 @@ export class SubjectService {
       subject.name = updatedSubject.name;
     }
 
+    // Go find level to add to subject creation
     if (
       updatedSubject.levelId !== undefined &&
       updatedSubject.levelId !== subject.level?.id
@@ -53,16 +55,37 @@ export class SubjectService {
       subject.level = selectedLevel;
     }
 
-    return await this.subjectRepository.save(subject);
+    await this.subjectRepository.save(subject);
   }
 
   async deleteSubject(id: number): Promise<void> {
+    const subject = await this.subjectRepository.findOne({ where: { id } });
+
+    if (!subject) {
+      throw new NotFoundException(`Subject with ID ${id} not found`);
+    }
+
     await this.subjectRepository.delete({ id });
   }
 
   async createSubject(subject: CreateSubjectDTO): Promise<SubjectEntity> {
+    // Checks if subject already exists (for this level)
+    const existingSubject = await this.subjectRepository.findOne({
+      where: {
+        name: subject.name,
+        level: { id: subject.levelId },
+      },
+    });
+
+    if (existingSubject) {
+      throw new ConflictException(
+        `Subject '${subject.name}' already exists for level ${subject.levelId}`,
+      );
+    }
+
     const createSubject = this.subjectRepository.create({ ...subject });
 
+    // Go find level to add to subject creation
     if (subject.levelId !== undefined) {
       const selectedLevel = await this.levelRepository.getLevel(
         subject.levelId,

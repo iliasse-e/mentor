@@ -9,7 +9,3 @@ export type SubjectLevel = {
   level: Level;
   subject: Subject;
 };
-
-export type CreateLevelDTO = {
-  name: string;
-};

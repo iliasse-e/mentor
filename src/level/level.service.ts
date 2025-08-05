@@ -7,8 +7,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { SubjectService } from 'src/subject/subject.service';
 import { DataSource, Repository } from 'typeorm';
+import { CreateLevelDTO, UpdateLevelDTO } from './level.dto';
 import { LevelEntity } from './level.entity';
-import { CreateLevelDTO } from './level.model';
 
 @Injectable()
 export class LevelService {
@@ -53,7 +53,7 @@ export class LevelService {
     return this.levelRepository.findOneBy({ name });
   }
 
-  async updateLevel(id: number, level: CreateLevelDTO): Promise<void> {
+  async updateLevel(id: number, level: UpdateLevelDTO): Promise<void> {
     await this.dataSource
       .createQueryBuilder()
       .update(LevelEntity)
