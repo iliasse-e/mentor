@@ -22,7 +22,8 @@ export class LevelService {
   ) {}
 
   findAll(): Promise<LevelEntity[]> {
-    return this.levelRepository.find();
+    // SELECT * FROM level_entity ORDER BY id;
+    return this.levelRepository.find({ order: { id: 'DESC' } });
   }
 
   async findSubjectsByLevelName(name: string): Promise<any> {
@@ -56,16 +57,21 @@ export class LevelService {
   }
 
   async updateLevel(id: number, level: UpdateLevelDTO): Promise<void> {
-    await this.dataSource
-      .createQueryBuilder()
-      .update(LevelEntity)
-      .set({ name: level.name })
-      .where('id = :id', { id: id })
-      .execute();
+    const existingLevel = await this.levelRepository.findOne({
+      where: { id: id },
+    });
+
+    if (!existingLevel) {
+      throw new NotFoundException(`Level with ID ${id} not found`);
+    }
+
+    existingLevel.name = level.name;
+
+    await this.levelRepository.save(existingLevel);
   }
 
   async deleteLevel(id: number): Promise<void> {
-    const isExistingLevel = await this.levelRepository.findOne({
+    const isExistingLevel = await this.levelRepository.exists({
       where: { id: id },
     });
 

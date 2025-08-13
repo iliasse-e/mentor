@@ -21,7 +21,8 @@ export class SubjectService {
   ) {}
 
   findAll(): Promise<SubjectEntity[]> {
-    return this.subjectRepository.find();
+    // SELECT * FROM subject_entity ORDER BY id;
+    return this.subjectRepository.find({ order: { id: 'ASC' } });
   }
 
   getSubject(id: number): Promise<SubjectEntity | null> {
@@ -59,9 +60,11 @@ export class SubjectService {
   }
 
   async deleteSubject(id: number): Promise<void> {
-    const subject = await this.subjectRepository.findOne({ where: { id } });
+    const isExistingSubject = await this.subjectRepository.exists({
+      where: { id },
+    });
 
-    if (!subject) {
+    if (!isExistingSubject) {
       throw new NotFoundException(`Subject with ID ${id} not found`);
     }
 
