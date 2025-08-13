@@ -5,6 +5,6 @@ export class LevelEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'varchar', length: 50, unique: true, nullable: false })
   name: string;
 }

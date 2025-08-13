@@ -16,6 +16,7 @@ import { SubjectModule } from './subject/subject.module';
       database: 'mentor',
       synchronize: true,
       autoLoadEntities: true,
+      logging: true,
     }),
     SubjectModule,
     LevelModule,

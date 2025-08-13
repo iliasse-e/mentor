@@ -6,7 +6,7 @@ export class SubjectEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: false, type: 'varchar', length: 150 })
   name: string;
 
   @ManyToOne(() => LevelEntity)

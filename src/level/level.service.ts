@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   forwardRef,
   Inject,
   Injectable,
@@ -33,6 +34,7 @@ export class LevelService {
     const filterSubjects = (await this.subjectService.findAll()).filter(
       (subject) => subject.id === level?.id,
     );
+
     const response = filterSubjects.map((subject) => ({
       level: { id: level.id, name: level.name },
       subject: {
@@ -63,10 +65,28 @@ export class LevelService {
   }
 
   async deleteLevel(id: number): Promise<void> {
+    const isExistingLevel = await this.levelRepository.findOne({
+      where: { id: id },
+    });
+
+    if (!isExistingLevel) {
+      throw new NotFoundException(`Level with ID ${id} not found`);
+    }
+
     await this.levelRepository.delete({ id });
   }
 
-  createLevel(level: CreateLevelDTO): Promise<LevelEntity> {
+  async createLevel(level: CreateLevelDTO): Promise<LevelEntity> {
+    const isExistingLevel = await this.levelRepository.findOne({
+      where: {
+        name: level.name,
+      },
+    });
+
+    if (isExistingLevel) {
+      throw new ConflictException(`Level '${level.name}' already exists`);
+    }
+
     const createdLevel = this.levelRepository.create({ ...level });
     return this.levelRepository.save(createdLevel);
   }
