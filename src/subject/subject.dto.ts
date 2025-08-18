@@ -1,17 +1,26 @@
+import { IsInt, IsPositive, IsString } from 'class-validator';
 import { ResponseLevelDTO } from 'src/level/level.dto';
 
-export type ResponseSubjectDTO = {
+export class ResponseSubjectDTO {
   id: number;
   name: string;
   level?: ResponseLevelDTO;
-};
+}
 
-export type CreateSubjectDTO = {
+export class CreateSubjectDTO {
+  @IsString()
   name: string;
-  levelId: number;
-};
 
-export type UpdateSubjectDTO = {
-  name: string;
+  @IsInt()
+  @IsPositive()
   levelId: number;
-};
+}
+
+export class UpdateSubjectDTO {
+  @IsString()
+  name: string;
+
+  @IsInt()
+  @IsPositive()
+  levelId: number;
+}

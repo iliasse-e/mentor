@@ -1,12 +1,16 @@
-export type ResponseLevelDTO = {
+import { IsString } from 'class-validator';
+
+export class ResponseLevelDTO {
   id: number;
   name: string;
-};
+}
 
-export type CreateLevelDTO = {
+export class CreateLevelDTO {
+  @IsString()
   name: string;
-};
+}
 
-export type UpdateLevelDTO = {
+export class UpdateLevelDTO {
+  @IsString()
   name: string;
-};
+}

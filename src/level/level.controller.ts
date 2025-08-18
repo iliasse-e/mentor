@@ -8,7 +8,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { CreateLevelDTO, ResponseLevelDTO } from './level.dto';
+import { CreateLevelDTO, ResponseLevelDTO, UpdateLevelDTO } from './level.dto';
 import { LevelService } from './level.service';
 
 @Controller('level')
@@ -40,7 +40,7 @@ export class LevelController {
   @Put(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() level: CreateLevelDTO,
+    @Body() level: UpdateLevelDTO,
   ): Promise<void> {
     return this.levelService.updateLevel(id, level);
   }

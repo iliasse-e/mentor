@@ -10,7 +10,7 @@ import { SubjectModule } from './subject/subject.module';
     TypeOrmModule.forRoot({
       type: 'mariadb',
       host: 'localhost',
-      port: 3306,
+      port: 3307,
       username: 'root',
       password: 'root',
       database: 'mentor',

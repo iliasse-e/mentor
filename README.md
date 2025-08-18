@@ -14,6 +14,7 @@ Application web développée avec NestJS, visant à faciliter la mise en relatio
 - **Docker** – Conteneurisation de la base de données
 - **MariaDB** – SGBD utilisé dans le conteneur Docker
 - **DBeaver** – Client SQL recommandé pour explorer et manipuler la base
+- **class-validator** – Pour la gestion de pipes et du typage des DTO
 
 ---
 
