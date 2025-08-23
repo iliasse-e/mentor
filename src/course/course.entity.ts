@@ -6,13 +6,13 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class CourseEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column({ type: 'double', nullable: true })
-  duration: number;
+  duration?: number;
 
   @Column({ type: 'double', nullable: true })
-  rating: number;
+  rating?: number;
 
   @ManyToOne(() => SubjectEntity, { eager: false })
   subject: SubjectEntity;
@@ -23,6 +23,6 @@ export class CourseEntity {
   @ManyToOne(() => MentorEntity, { eager: false })
   mentor: MentorEntity;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'datetime', nullable: false })
   datetime: Date;
 }
