@@ -1,11 +1,18 @@
-import { IsDate, IsNumber, IsString, IsUUID } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+import {
+  IsDate,
+  IsDateString,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { ResponseMentorDTO } from 'src/mentor/mentor.dto';
 import { ResponseStudentDTO } from 'src/student/student.dto';
 import { ResponseSubjectDTO } from 'src/subject/subject.dto';
 
 export class ResponseCourseDTO {
   @IsString()
-  id: string;
+  id: number;
 
   @IsNumber()
   duration: number;
@@ -30,38 +37,22 @@ export class CreateCourseDTO {
   @IsNumber()
   duration: number;
 
+  @IsOptional()
   @IsNumber()
-  rating: number;
+  rating?: number;
 
-  @IsUUID()
+  @IsNumber()
   subjectId: string;
 
-  @IsUUID()
+  @IsNumber()
   studentId: string;
 
-  @IsUUID()
+  @IsNumber()
   mentorId: string;
 
-  @IsDate()
+  @IsDateString()
   datetime: Date;
 }
 
-export class UpdateCourseDTO {
-  @IsNumber()
-  duration: number;
-
-  @IsNumber()
-  rating: number;
-
-  @IsUUID()
-  subjectId: string;
-
-  @IsUUID()
-  studentId: string;
-
-  @IsUUID()
-  mentorId: string;
-
-  @IsDate()
-  datetime: Date;
-}
+// Allow properties to be optional (either we should use @IsOptional())
+export class UpdateCourseDTO extends PartialType(CreateCourseDTO) {}

@@ -64,3 +64,11 @@ docker-compose up -d
 # Lancer le server Nest
 nest start
 ```
+
+## TODO
+
+### CourseService
+
+#### Méthode delete :
+
+Implémenter le soft delete.

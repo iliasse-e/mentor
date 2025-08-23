@@ -38,7 +38,7 @@ export class CourseSeeder {
         subjectName: 'Mathématiques',
         studentEmail: 'alice@example.com',
         mentorEmail: 'jean.dupont@example.com',
-        datetime: new Date('2025-08-22T10:00:00'),
+        datetime: '2025-08-22T10:00:00',
       },
       {
         duration: 1.5,
@@ -46,7 +46,7 @@ export class CourseSeeder {
         subjectName: 'Programmation',
         studentEmail: 'chloe@example.com',
         mentorEmail: 'sophie.moreau@example.com',
-        datetime: new Date('2025-08-23T14:30:00'),
+        datetime: '2025-08-23T14:30:00',
       },
     ];
 
