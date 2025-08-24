@@ -3,14 +3,14 @@ import {
   Column,
   Entity,
   Index,
-  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity({ orderBy: { id: 'ASC' } })
 export class StudentEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column({ type: 'varchar', length: 50, nullable: false })
   firstname: string;
@@ -25,6 +25,9 @@ export class StudentEntity {
   @Column({ type: 'double', nullable: true })
   rating: number;
 
-  @ManyToMany(() => CourseEntity, { eager: false, nullable: true })
+  @OneToMany(() => CourseEntity, (course) => course.student)
   courses: CourseEntity[];
+
+  @Column({ type: 'timestamp', nullable: true })
+  deletedAt?: Date;
 }

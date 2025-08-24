@@ -32,7 +32,7 @@ export class CourseValidationService {
   }> {
     const [subject, student, mentor] = await Promise.all([
       this.subjectRepository.findOneBy({ id: Number(dto.subjectId) }),
-      this.studentRepository.findOneBy({ id: dto.studentId }),
+      this.studentRepository.findOneBy({ id: Number(dto.studentId) }),
       this.mentorRepository.findOneBy({ id: dto.mentorId }),
     ]);
 

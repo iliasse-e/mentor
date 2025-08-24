@@ -4,8 +4,9 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
+  Patch,
   Post,
-  Put,
 } from '@nestjs/common';
 import { CreateStudentDTO, UpdateStudentDTO } from './student.dto';
 import { StudentService } from './student.service';
@@ -20,22 +21,26 @@ export class StudentController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.studentService.findOne(id);
   }
 
   @Post()
-  createOne(@Body() student: CreateStudentDTO) {
-    return this.studentService.create(student);
+  createOne(@Body() dto: CreateStudentDTO) {
+    return this.studentService.create(dto);
   }
 
   @Delete(':id')
-  deleteOne(@Param('id') id: string) {
-    return this.studentService.deleteOne(id);
+  async deleteOne(@Param('id', ParseIntPipe) id: number) {
+    await this.studentService.deleteOne(id);
+    return { message: `Course ${id} deleted successfully` };
   }
 
-  @Put(':id')
-  updateOne(@Param('id') id: string, student: UpdateStudentDTO) {
-    return this.studentService.updateOne(id, student);
+  @Patch(':id')
+  updateOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateStudentDTO,
+  ) {
+    return this.studentService.updateOne(id, dto);
   }
 }

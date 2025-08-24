@@ -17,7 +17,10 @@ export class CourseEntity {
   @ManyToOne(() => SubjectEntity, { eager: false })
   subject: SubjectEntity;
 
-  @ManyToOne(() => StudentEntity, { eager: false })
+  @ManyToOne(() => StudentEntity, (student) => student.courses, {
+    eager: false,
+    nullable: false,
+  })
   student: StudentEntity;
 
   @ManyToOne(() => MentorEntity, { eager: false })

@@ -1,8 +1,16 @@
-import { IsArray, IsEmail, IsNumber, IsString } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+import {
+  IsArray,
+  IsEmail,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class ResponseStudentDTO {
   @IsString()
-  id: string;
+  id: number;
 
   @IsString()
   firstname: string;
@@ -17,6 +25,7 @@ export class ResponseStudentDTO {
   rating: number;
 
   @IsArray()
+  @IsInt({ each: true })
   courses: ResponseStudentDTO[];
 }
 
@@ -31,16 +40,8 @@ export class CreateStudentDTO {
   email: string;
 }
 
-export class UpdateStudentDTO {
-  @IsString()
-  firstname: string;
-
-  @IsString()
-  lastname: string;
-
+export class UpdateStudentDTO extends PartialType(CreateStudentDTO) {
+  @IsOptional()
   @IsNumber()
-  rating: number;
-
-  @IsArray()
-  courses: any[];
+  rating?: number;
 }
